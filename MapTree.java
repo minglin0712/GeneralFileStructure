@@ -297,39 +297,6 @@ class TreeNode{
             //System.out.println(this.children.toString());
             return Arrays.toString( (String[]) reference );
         }
-        
-        /**
-        * deep copy (clone)
-        * @return copy of TreeNode
-        */
-        public TreeNode deepCopy() {
-            TreeNode newNode = new TreeNode(reference);
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                TreeNode child = (TreeNode) iter.next();
-                newNode.addChildNode(child.deepCopy());
-            }
-            return newNode;
-        }
-        
-        /**
-        * deep copy (clone) and prune 
-        * @param depth - number of child levels to be copied
-        * @return copy of TreeNode
-        */
-        public TreeNode deepCopyPrune(int depth) {
-            if (depth < 0)
-                throw new IllegalArgumentException("Depth is negative");
-            TreeNode newNode = new TreeNode(reference);
-            if (depth == 0)
-                return newNode;
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                TreeNode child = (TreeNode) iter.next();
-                newNode.addChildNode(child.deepCopyPrune(depth - 1));
-            }
-            return newNode;
-        }
-        
-        
         /**
         * @return level = distance from root
         */
@@ -342,45 +309,6 @@ class TreeNode{
             }
             return level;
         }
-
-        /**
-        * walk through subtree of this node
-        * @param callbackHandler function called on iteration 
-        */
-        public int walkTree(TreeNodeCallback callbackHandler) {
-            int code = 0;
-            code = callbackHandler.handleTreeNode(this);
-            if (code != TreeNodeCallback.CONTINUE)
-                return code;
-            ChildLoop: for (Iterator iter = children.iterator(); iter.hasNext();) {
-                TreeNode child = (TreeNode) iter.next();
-                code = child.walkTree(callbackHandler);
-                if (code >= TreeNodeCallback.CONTINUE_PARENT)
-                  return code;
-            }
-            return code;
-        }
-
-        /**
-        * walk through children subtrees of this node
-        * @param callbackHandler function called on iteration 
-        */
-        public int walkChildren(TreeNodeCallback callbackHandler) {
-            int code = 0;
-            ChildLoop: for (Iterator iter = children.iterator(); iter.hasNext();) {
-            TreeNode child = (TreeNode) iter.next();
-            code = callbackHandler.handleTreeNode(child);
-            if (code >= TreeNodeCallback.CONTINUE_PARENT)
-                return code;
-            if (code == TreeNodeCallback.CONTINUE) {
-                code = child.walkChildren(callbackHandler);
-                if (code > TreeNodeCallback.CONTINUE_PARENT)
-                    return code;
-                }
-              }
-              return code;
-            }
-
             /**
              * @return List of children
              */
@@ -409,37 +337,6 @@ class TreeNode{
         public void setReference(Object object) {
             reference = object;
         }    
-    }
-
-    /*
-    * This software is subject to the terms of the Common Public License
-    * Agreement, available at the following URL:
-    *   http://www.opensource.org/licenses/cpl.html .
-    * Copyright (C) 2003-2004 TONBELLER AG.
-    * All Rights Reserved.
-    * You must accept the terms of that agreement to use this software.
-    * 
-    *
-    * 
-    */
-
-    /**
-    * handle call back for position tree
-    */
-    interface TreeNodeCallback {
-
-        public static final int CONTINUE = 0;
-        public static final int CONTINUE_SIBLING = 1;
-        public static final int CONTINUE_PARENT = 2;
-        public static final int BREAK = 3;
-
-        /**
-          * @param node the current node to handle
-          * @return 0 continue tree walk
-          *         1 break this node (continue sibling)
-          *         2 break this level (continue parent level)
-          *         3 break tree walk 
-         */
-          int handleTreeNode(TreeNode node);
-    } // TreeNodeCallback    
+}
+   
     
